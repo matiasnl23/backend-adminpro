@@ -7,25 +7,17 @@ var app = express();
 
 // Conexión DB
 mongoose.connection.openUri('mongodb://localhost:27017/hospitalesDB', (err, res) => {
+    // Finalizar con error si no se concreta la conexión con MongoDB
     if (err) throw err;
 
     console.log('Base de datos: \x1b[1m\x1b[32m%s\x1b[0m', 'Online');
 });
 
-// Rutas
-app.get('/', (req, res, next) => {
-    res.status(200).json({
-        error: false,
-        mensaje: 'Petición realizada correctamente'
-    });
-});
+// Importación de rutas
+var appRoute = require('./routes/app');
 
-app.get('/404', (req, res, next) => {
-    res.status(404).json({
-        error: true,
-        mensaje: 'Página no encontrada'
-    });
-});
+// Utilizar las rutas de 'appRoute' al acceder a '/'
+app.use('/', appRoute);
 
 // Escuchar peticiones
 app.listen(3000, () => {

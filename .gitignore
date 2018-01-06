@@ -1,0 +1,5 @@
+// Ingorando módulos de node
+node_modules
+
+// npm
+package-lock.json

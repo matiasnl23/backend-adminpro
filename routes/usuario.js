@@ -1,9 +1,13 @@
 // Importaciones necesarias
 var express = require('express');
 var bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
 
 // Instancio express
 var app = express();
+
+// Obtengo el SEED
+var SEED = require('../config/config').SEED;
 
 // Obtengo el modelo del usuario
 var Usuario = require('../models/usuario');
@@ -25,6 +29,26 @@ app.get('/', (req, res, next) => {
             error: false,
             usuarios
         });
+    });
+});
+
+// ==================================================
+// Verificación del token (FORMA NO PRÁCTICA)
+// ==================================================
+app.use('/', (req, res, next) => {
+    var token = req.query.token;
+
+    jwt.verify(token, SEED, (err, decoded) => {
+
+        if (err) {
+            return res.status(401).json({
+                error: true,
+                mensaje: 'Error al verificar el token',
+                errors: err
+            });
+        }
+
+        next();
     });
 });
 

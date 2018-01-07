@@ -3,11 +3,10 @@ var express = require('express');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 
+var mdAutenticacion = require('../middlewares/autenticacion');
+
 // Instancio express
 var app = express();
-
-// Obtengo el SEED
-var SEED = require('../config/config').SEED;
 
 // Obtengo el modelo del usuario
 var Usuario = require('../models/usuario');
@@ -32,30 +31,12 @@ app.get('/', (req, res, next) => {
     });
 });
 
-// ==================================================
-// Verificación del token (FORMA NO PRÁCTICA)
-// ==================================================
-app.use('/', (req, res, next) => {
-    var token = req.query.token;
 
-    jwt.verify(token, SEED, (err, decoded) => {
-
-        if (err) {
-            return res.status(401).json({
-                error: true,
-                mensaje: 'Error al verificar el token',
-                errors: err
-            });
-        }
-
-        next();
-    });
-});
 
 // ==================================================
 // Crear un nuevo usuario
 // ==================================================
-app.post('/', (req, res) => {
+app.post('/', mdAutenticacion.verificaToken, (req, res) => {
     var body = req.body; // Solo funciona si bodyParser existe
 
     var usuario = new Usuario({
@@ -77,7 +58,8 @@ app.post('/', (req, res) => {
 
         res.status(201).json({
             error: false,
-            usuario: usuarioGuardado
+            usuarioGuardado,
+            usuarioLogueado: req.usuarioLogueado
         });
     });
 });
@@ -85,7 +67,7 @@ app.post('/', (req, res) => {
 // ==================================================
 // Actualizar usuario
 // ==================================================
-app.put('/:id', (req, res) => {
+app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
     var id = req.params.id;
     var body = req.body;
 
@@ -125,7 +107,8 @@ app.put('/:id', (req, res) => {
 
             res.status(200).json({
                 error: false,
-                usuarioGuardado
+                usuarioGuardado,
+                usuarioLogueado: req.usuarioLogueado
             });
         });
     });
@@ -134,7 +117,7 @@ app.put('/:id', (req, res) => {
 // ==================================================
 // Borrar un usuario por ID
 // ==================================================
-app.delete('/:id', (req, res) => {
+app.delete('/:id', mdAutenticacion.verificaToken, (req, res) => {
     var id = req.params.id;
 
     Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
@@ -156,7 +139,8 @@ app.delete('/:id', (req, res) => {
 
         res.status(200).json({
             error: false,
-            usuario: usuarioBorrado
+            usuarioBorrado,
+            usuarioLogueado: req.usuarioLogueado
         });
     });
 });

@@ -15,20 +15,30 @@ var Usuario = require('../models/usuario');
 // Obtener listado de usuarios
 // ==================================================
 app.get('/', (req, res, next) => {
-    Usuario.find({}, 'nombre email img role').exec((err, usuarios) => {
-        if (err) {
-            return res.status(500).json({
-                error: true,
-                mensaje: 'Error al tratar de obtener los usuarios',
-                errors: err
-            });
-        }
 
-        res.status(200).json({
-            error: false,
-            usuarios
+    var offset = req.query.offset || 0;
+    offset = Number(offset);
+
+    Usuario.find({}, 'nombre email img role')
+        .skip(offset)
+        .limit(5)
+        .exec((err, usuarios) => {
+            if (err) {
+                return res.status(500).json({
+                    error: true,
+                    mensaje: 'Error al tratar de obtener los usuarios',
+                    errors: err
+                });
+            }
+
+            Usuario.count({}, (err, resultados) => {
+                res.status(200).json({
+                    error: false,
+                    resultados,
+                    usuarios
+                });
+            });
         });
-    });
 });
 
 

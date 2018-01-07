@@ -14,7 +14,12 @@ var Medico = require('../models/medico');
 // Obtener listado de los médicos
 // ==================================================
 app.get('/', (req, res, next) => {
+    var offset = req.query.offset || 0;
+    offset = Number(offset);
+
     Medico.find({})
+        .skip(offset)
+        .limit(5)
         .populate('hospital')
         .populate('usuario', 'nombre email')
         .exec((err, medicos) => {
@@ -25,11 +30,13 @@ app.get('/', (req, res, next) => {
                     errors: err
                 });
             }
-
-            res.status(200).json({
-                error: false,
-                medicos
-            });
+            Medico.count({}, (err, resultados) => {
+                res.status(200).json({
+                    error: false,
+                    resultados,
+                    medicos
+                });
+            })
         });
 });
 

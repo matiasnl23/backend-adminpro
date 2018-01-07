@@ -14,20 +14,30 @@ var Hospital = require('../models/hospital');
 // Obtener listado de hospitales
 // ==================================================
 app.get('/', (req, res, next) => {
-    Hospital.find({}).populate('usuario', 'nombre email').exec((err, hospitales) => {
-        if (err) {
-            return res.status(500).json({
-                error: true,
-                mensaje: 'Error al tratar de obtener los hospitales',
-                errors: err
-            });
-        }
+    var offset = req.query.offset || 0;
+    offset = Number(offset);
 
-        res.status(200).json({
-            error: false,
-            hospitales
+    Hospital.find({})
+        .skip(offset)
+        .limit(5)
+        .populate('usuario', 'nombre email')
+        .exec((err, hospitales) => {
+            if (err) {
+                return res.status(500).json({
+                    error: true,
+                    mensaje: 'Error al tratar de obtener los hospitales',
+                    errors: err
+                });
+            }
+
+            Hospital.count({}, (err, resultados) => {
+                res.status(200).json({
+                    error: false,
+                    resultados,
+                    hospitales
+                });
+            })
         });
-    });
 });
 
 

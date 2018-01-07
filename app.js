@@ -25,12 +25,15 @@ var loginRoutes = require('./routes/login');
 var usuarioRoutes = require('./routes/usuario');
 var hospitalRoutes = require('./routes/hospital');
 var medicoRoutes = require('./routes/medico');
+var busquedaRoutes = require('./routes/busqueda');
 
 // Utilizar las rutas de 'appRoute' al acceder a '/'
 app.use('/login', loginRoutes);
 app.use('/usuario', usuarioRoutes);
 app.use('/hospital', hospitalRoutes);
 app.use('/medico', medicoRoutes);
+app.use('/busqueda', busquedaRoutes);
+
 app.use('/', appRoutes);
 
 // Escuchar peticiones

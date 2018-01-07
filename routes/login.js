@@ -6,6 +6,9 @@ var jwt = require('jsonwebtoken');
 // Instancio express
 var app = express();
 
+// Obtengo el SEED
+var SEED = require('../config/config').SEED;
+
 // Obtengo el modelo del usuario
 var Usuario = require('../models/usuario');
 
@@ -41,7 +44,7 @@ app.post('/', (req, res) => {
         usuarioExistente.password = undefined;
 
         // Creación del TOKEN
-        var token = jwt.sign({ usuario: usuarioExistente }, 'este-es-un-codigo-dificil', { expiresIn: 14400 });
+        var token = jwt.sign({ usuario: usuarioExistente }, SEED, { expiresIn: 14400 });
 
         res.status(200).json({
             error: false,

@@ -58,4 +58,83 @@ app.post('/', (req, res) => {
     });
 });
 
+// ==================================================
+// Actualizar usuario
+// ==================================================
+app.put('/:id', (req, res) => {
+    var id = req.params.id;
+    var body = req.body;
+
+    Usuario.findById(id, (err, usuario) => {
+
+        if (err) {
+            return res.status(500).json({
+                error: true,
+                mensaje: 'Error al buscar usuario',
+                errors: err
+            });
+        }
+
+        if (!usuario) {
+            return res.status(404).json({
+                error: true,
+                mensaje: `El usuario con el id ${id} no existe.`,
+                errors: { message: 'No existe el usuario con ese ID' }
+            });
+        }
+
+        usuario.nombre = body.nombre;
+        usuario.email = body.email;
+        usuario.role = body.role;
+
+        usuario.save((err, usuarioGuardado) => {
+            if (err) {
+                return res.status(400).json({
+                    error: true,
+                    mensaje: 'Error al actualizar la información del usuario',
+                    errors: err
+                });
+            }
+
+            // Oculto el password en la respuesta
+            usuarioGuardado.password = undefined;
+
+            res.status(200).json({
+                error: false,
+                usuarioGuardado
+            });
+        });
+    });
+});
+
+// ==================================================
+// Borrar un usuario por ID
+// ==================================================
+app.delete('/:id', (req, res) => {
+    var id = req.params.id;
+
+    Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
+        if (err) {
+            return res.status(500).json({
+                error: true,
+                mensaje: 'Error al borrar usuario',
+                errors: err
+            });
+        }
+
+        if (!usuarioBorrado) {
+            return res.status(404).json({
+                error: true,
+                mensaje: `El usuario con el id ${id} no existe.`,
+                errors: { message: 'No existe el usuario con ese ID' }
+            });
+        }
+
+        res.status(200).json({
+            error: false,
+            usuario: usuarioBorrado
+        });
+    });
+});
+
 module.exports = app;

@@ -1,9 +1,15 @@
 // Requires
 var express = require('express');
 var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
 
 // Inicializar variables
 var app = express();
+
+// Body parser
+// parse applitation/x-www-form-urlencoded, segunda línea: 'parse application/json'
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Conexión DB
 mongoose.connection.openUri('mongodb://localhost:27017/hospitalesDB', (err, res) => {

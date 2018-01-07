@@ -14,7 +14,7 @@ var Hospital = require('../models/hospital');
 // Obtener listado de hospitales
 // ==================================================
 app.get('/', (req, res, next) => {
-    Hospital.find({}, (err, hospitales) => {
+    Hospital.find({}).populate('usuario', 'nombre email').exec((err, hospitales) => {
         if (err) {
             return res.status(500).json({
                 error: true,

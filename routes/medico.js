@@ -14,20 +14,23 @@ var Medico = require('../models/medico');
 // Obtener listado de los médicos
 // ==================================================
 app.get('/', (req, res, next) => {
-    Medico.find({}, (err, medicos) => {
-        if (err) {
-            return res.status(500).json({
-                error: true,
-                mensaje: 'Error al tratar de obtener los médicos',
-                errors: err
-            });
-        }
+    Medico.find({})
+        .populate('hospital')
+        .populate('usuario', 'nombre email')
+        .exec((err, medicos) => {
+            if (err) {
+                return res.status(500).json({
+                    error: true,
+                    mensaje: 'Error al tratar de obtener los médicos',
+                    errors: err
+                });
+            }
 
-        res.status(200).json({
-            error: false,
-            medicos
+            res.status(200).json({
+                error: false,
+                medicos
+            });
         });
-    });
 });
 
 

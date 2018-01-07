@@ -1,8 +1,8 @@
 // Importaciones necesarias
 var express = require('express');
 var bcrypt = require('bcryptjs');
-var jwt = require('jsonwebtoken');
 
+// Middlewares
 var mdAutenticacion = require('../middlewares/autenticacion');
 
 // Instancio express

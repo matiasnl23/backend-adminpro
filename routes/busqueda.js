@@ -8,7 +8,9 @@ var Hospital = require('../models/hospital');
 var Medico = require('../models/medico');
 var Usuario = require('../models/usuario');
 
-// Rutas
+// ==================================================
+// Búsqueda general
+// ==================================================
 app.get('/todo/:busqueda', (req, res, next) => {
     var busqueda = req.params.busqueda;
     busqueda = new RegExp(busqueda, 'i');
@@ -25,14 +27,47 @@ app.get('/todo/:busqueda', (req, res, next) => {
             usuarios: respuestas[2]
         });
     });
-
-    // buscarHopitales(busqueda).then(hospitales => {
-    //     res.status(200).json({
-    //         error: false,
-    //         hospitales
-    //     });
-    // });
 });
+
+// ==================================================
+// Búsqueda por tabla
+// ==================================================
+app.get('/coleccion/:tabla/:busqueda', (req, res, next) => {
+    var tabla = req.params.tabla;
+    var busqueda = req.params.busqueda;
+    busqueda = new RegExp(busqueda, 'i');
+
+    var promesa;
+    switch (tabla) {
+        case 'hospitales':
+            promesa = buscarHopitales(busqueda)
+            break;
+        case 'medicos':
+            promesa = buscarMedicos(busqueda)
+            break;
+        case 'usuarios':
+            promesa = buscarUsuarios(busqueda)
+            break;
+
+        default:
+            return res.status(400).json({
+                error: true,
+                mensaje: 'El parámetro de búsqueda no es correcto'
+            })
+            break;
+    }
+
+    promesa.then(datos => {
+        res.status(200).json({
+            error: false,
+            [tabla]: datos
+        });
+    });
+});
+
+// ==================================================
+// Funciones que retornan promesas
+// ==================================================
 
 function buscarHopitales(busqueda) {
     return new Promise((resolve, reject) => {

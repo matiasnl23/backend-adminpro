@@ -1,6 +1,7 @@
 // Importaciones necesarias
 var express = require('express');
 var bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
 
 // Instancio express
 var app = express();
@@ -36,13 +37,16 @@ app.post('/', (req, res) => {
             });
         }
 
-        // Futura creación del token
-
+        // Elimino la contraseña de la respuesta
         usuarioExistente.password = undefined;
+
+        // Creación del TOKEN
+        var token = jwt.sign({ usuario: usuarioExistente }, 'este-es-un-codigo-dificil', { expiresIn: 14400 });
 
         res.status(200).json({
             error: false,
             usuario: usuarioExistente,
+            token: token,
             id: usuarioExistente._id
         });
     });

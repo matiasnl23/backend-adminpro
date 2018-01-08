@@ -18,8 +18,8 @@ var usuarioSchema = new Schema({
     email: { type: String, unique: true, required: [true, 'El correo electrónico es requerido'] },
     password: { type: String, required: [true, 'La contraseña es obligatoria'] },
     img: { type: String, required: false },
-    role: { type: String, required: true, default: 'USER_ROLE', enum: rolesValidos }
-
+    role: { type: String, required: true, default: 'USER_ROLE', enum: rolesValidos },
+    google: { type: Boolean, required: true, default: false }
 });
 
 // En caso de tener varios 'unique' se puede utilizar la clave en el mensaje.
